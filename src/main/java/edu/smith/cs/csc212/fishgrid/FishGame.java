@@ -1,5 +1,6 @@
 package edu.smith.cs.csc212.fishgrid;
 
+import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -23,6 +24,7 @@ public class FishGame {
 	 * The home location.
 	 */
 	FishHome home;
+	List<Fish> atHome;
 	/**
 	 * These are the missing fish!
 	 */
@@ -48,6 +50,7 @@ public class FishGame {
 	Snail snail;
 	Snail snail2;
 	
+	final int NUM_HEARTS = 15;
 	
 	/**
 	 * Create a FishGame of a particular size.
@@ -62,16 +65,21 @@ public class FishGame {
 		
 		// Add a home!
 		home = world.insertFishHome();
+		atHome = new ArrayList<Fish>();
 				
 		
 		for (int i=0; i< NUM_ROCKS; i++) {
 			world.insertRockRandomly();
+			world.insertFallingRock(); //tutoring helped me implement the FallingRock class
+		}
+		
+		for (int i=0; i < NUM_HEARTS; i++) {
+			world.insertHeartRandomly();
 		}
 		
 		
-		// TODO(lab) Make the snail!
 		snail = world.insertSnailRandomly();
-		snail2 = world.insertSnailRandomly();
+		snail2 = world.insertSnailRandomly();  
 		
 		
 		// Make the player out of the 0th fish color.
@@ -127,14 +135,38 @@ public class FishGame {
 				}
 				// Convince Java it's a Fish (we know it is!)
 				Fish justFound = (Fish) wo;
-				
-				// Remove from world.
-				// TODO(lab): add to found instead! (So we see objectsFollow work!)
-				justFound.remove();
+				found.add(justFound);
 				missing.remove(justFound);
 				// Increase score when you find a fish!
-				score += 10;
+				if ( wo instanceof Fish) {
+					Fish fish = (Fish) wo;
+					if (fish.getColor() == Color.magenta || fish.getColor() == Color.pink) {
+						score += 20;
+					} else {
+						score += 10;
+					}
+				}
+		
+			
+					}
+			if (wo instanceof FishHome) {
+				System.out.println("here");
+				for (int i = 0; i < found.size(); i++) {
+					atHome.add(found.get(i));
+					System.out.println("added to atHome");
+					world.remove(found.get(i));
+					found.remove(i);
+			
+				}
+				}
+			if (wo instanceof Heart) {
+				Heart h = (Heart) wo;
+				score += 5;
+				world.remove(h);
+
+				
 			}
+					
 		}
 		
 		// Make sure missing fish *do* something.
@@ -144,6 +176,7 @@ public class FishGame {
 		// Step any world-objects that run themselves.
 		world.stepAll();
 	}
+		
 	
 	/**
 	 * Call moveRandomly() on all of the missing fish to make them seem alive.
@@ -152,10 +185,14 @@ public class FishGame {
 		Random rand = ThreadLocalRandom.current();
 		for (Fish lost : missing) {
 			// 30% of the time, lost fish move randomly.
-			if (rand.nextDouble() < 0.3) {
-				lost.moveRandomly();
-				// TODO(lab): What goes here?
+			if (lost.fastScared) {
+				if (rand.nextDouble() < 0.8) {
+					lost.moveRandomly();
+				}
 			}
+			else if (rand.nextDouble() < 0.3) {
+				lost.moveRandomly();
+			} 
 		}
 	}
 
@@ -166,9 +203,15 @@ public class FishGame {
 	 */
 	public void click(int x, int y) {
 		// TODO(FishGrid) use this print to debug your World.canSwim changes!
-		System.out.println("Clicked on: "+x+","+y+ " world.canSwim(player,...)="+world.canSwim(player, x, y));
+		//System.out.println("Clicked on: "+x+","+y+ " world.canSwim(player,...)="+world.canSwim(player, x, y));
 		List<WorldObject> atPoint = world.find(x, y);
-		// TODO(FishGrid) allow the user to click and remove rocks.
+		for (int i = 0; i < atPoint.size(); i++) {
+			if (atPoint.get(i) instanceof Rock) {
+				world.remove(atPoint.get(i));
+			}
+		}
+		//world.remove(rock);
+		
 
 	}
 	

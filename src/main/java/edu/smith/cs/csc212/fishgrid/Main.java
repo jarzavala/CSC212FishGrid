@@ -184,7 +184,8 @@ public class Main extends GFX {
 
 		// Move the player if we can:
 		boolean moved = false;
-		if (up) {
+		if (up) { 
+			//game.player.getX() + 1 == snail.getX() + 1 ;
 			moved = this.game.player.moveUp();
 		} else if (down) {
 			moved = this.game.player.moveDown();

@@ -19,10 +19,12 @@ public class Fish extends WorldObject {
 			Color.red,
 			Color.green,
 			Color.yellow,
-			Color.magenta,
+			Color.magenta, //worth more points
 			Color.cyan,
-			Color.pink
-			// TODO: (FishGrid) Maybe make a special fish that is more points?
+			Color.pink, //worth more points
+			Color.orange,
+			Color.white,
+			Color.lightGray
 	};
 	/**
 	 * This is an index into the {@link #COLORS} array.
@@ -32,6 +34,8 @@ public class Fish extends WorldObject {
 	 * Whether or not this is the player;
 	 */
 	boolean player = false;
+	
+	boolean fastScared = rand.nextDouble() < 0.5;
 	
 	/**
 	 * Called only on the Fish that is the player!

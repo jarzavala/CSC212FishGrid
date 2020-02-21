@@ -79,7 +79,7 @@ public class World {
 	 */
 	public void register(WorldObject item) {
 		// Print out what we've added, for our sanity.
-		System.out.println("register: "+item);
+		//System.out.println("register: "+item);
 		items.add(item);
 	}
 	
@@ -157,6 +157,13 @@ public class World {
 		return r;
 	}
 	
+	public FallingRock insertFallingRock() {
+		FallingRock r = new FallingRock(this);
+		insertRandomly(r);
+		return r;
+	}
+	
+	
 	/**
 	 * Insert a new Fish into the world at random of a specific color.
 	 * @param color - the color of the fish.
@@ -184,6 +191,12 @@ public class World {
 		return snail;
 	}
 	
+	public Heart insertHeartRandomly() {
+		Heart heart = new Heart(this);
+		insertRandomly(heart);
+		return heart;
+	}
+	
 	/**
 	 * Determine if a WorldObject can swim to a particular point.
 	 * 
@@ -204,7 +217,12 @@ public class World {
 		List<WorldObject> inSpot = this.find(x, y);
 		
 		for (WorldObject it : inSpot) {
-			// TODO(FishGrid): Don't let us move over rocks as a Fish.
+			if (it instanceof Rock) {
+				return false;
+			}
+			if (it instanceof FallingRock) {
+				return false;
+			}
 			// The other fish shouldn't step "on" the player, the player should step on the other fish.
 			if (it instanceof Snail) {
 				// This if-statement doesn't let anyone step on the Snail.
@@ -233,18 +251,21 @@ public class World {
 	 * @param followers a set of objects to follow the leader.
 	 */
 	public static void objectsFollow(WorldObject target, List<? extends WorldObject> followers) {
-		// TODO(FishGrid) Comment this method!
-		// Q1. What is recentPositions?
-		// Q2. What is followers?
-		// Q3. What is target?
-		// Q4. Why is past = putWhere[i+1]? Why not putWhere[i]?
+		// Q1. What is recentPositions? The coordinates of the player fish's movements
+		// Q2. What is followers? The coordinates of the found fish following the player fish
+		// Q3. What is target? The coordinates of the square the play fish is currently on
+		// Q4. Why is past = putWhere[i+1]? Why not putWhere[i]? putWhere[i] places the first following fish on top of the player's fish, putWhere[i+1] places the following fish behind it
 		List<IntPoint> putWhere = new ArrayList<>(target.recentPositions);
 		for (int i=0; i < followers.size() && i+1 < putWhere.size(); i++) {
-			// Q5. What is the deal with the two conditions in this for-loop?
+			// Q5. What is the deal with the two conditions in this for-loop? These conditions serve as checkers to avoid an error. i < followers.size() loops through all the followers, but if i+1 < putWhere.size() were not there, the code that follows would not work
 			// Conditions are in the "while" part of this loop.
 			
 			IntPoint past = putWhere.get(i+1);
 			followers.get(i).setPosition(past.x, past.y);
+			//System.out.println("target.recentPositions: " + target.recentPositions);
+			//System.out.println("followers: " + followers);
+			//System.out.println("target: " + target);
+			//System.out.println("past: " + past + "i: " + i);
 		}
 	}
 }
