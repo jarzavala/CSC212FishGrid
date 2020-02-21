@@ -150,7 +150,6 @@ public class FishGame {
 			
 					}
 			if (wo instanceof FishHome) {
-				System.out.println("here");
 				for (int i = 0; i < found.size(); i++) {
 					atHome.add(found.get(i));
 					System.out.println("added to atHome");
@@ -193,6 +192,7 @@ public class FishGame {
 			else if (rand.nextDouble() < 0.3) {
 				lost.moveRandomly();
 			} 
+			
 		}
 	}
 
